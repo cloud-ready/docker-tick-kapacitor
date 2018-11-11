@@ -1,0 +1,30 @@
+version: '2.1'
+services:
+  tick-kapacitor:
+    container_name: ${CONTAINER_HOST_NAME:-standalone.tick}-kapacitor
+    hostname: ${CONTAINER_HOST_NAME:-standalone.tick}-kapacitor
+    image: ${IMAGE_NAME:-kapacitor}:${IMAGE_TAG:-1.5.1}
+    environment:
+      KAPACITOR_HOSTNAME: ${CONTAINER_HOST_NAME:-standalone.tick}-kapacitor
+      KAPACITOR_INFLUXDB_0_URLS_0: http://${CONTAINER_HOST_NAME:-standalone.tick}-influxdb:${INFLUXDB_HTTP_API_PORT:-8086}
+      KAPACITOR_LOGGING_LEVEL: ${KAPACITOR_LOGGING_LEVEL:-INFO}
+      KAPACITOR_REPORTING_ENABLED: ${KAPACITOR_REPORTING_ENABLED:-false}
+    networks:
+      local-network:
+        ipv4_address: 172.16.238.83
+        #ipv6_address: 2001:3984:3989::83
+    ports:
+    - "${EXTERNAL_KAPACITOR_PORT:-9092}:${KAPACITOR_PORT:-9092}"
+    restart: always
+
+
+networks:
+  local-network:
+    external: true
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.238.0/24
+      #- subnet: 2001:3984:3989::/64
