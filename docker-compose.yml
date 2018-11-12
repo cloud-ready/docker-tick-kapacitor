@@ -2,19 +2,27 @@ version: '2.1'
 services:
   tick-kapacitor:
     container_name: ${CONTAINER_HOST_NAME:-standalone.tick}-kapacitor
-    hostname: ${CONTAINER_HOST_NAME:-standalone.tick}-kapacitor
-    image: ${IMAGE_NAME:-kapacitor}:${IMAGE_TAG:-1.5.1}
     environment:
       KAPACITOR_HOSTNAME: ${CONTAINER_HOST_NAME:-standalone.tick}-kapacitor
       KAPACITOR_INFLUXDB_0_URLS_0: http://${CONTAINER_HOST_NAME:-standalone.tick}-influxdb:${INFLUXDB_HTTP_API_PORT:-8086}
       KAPACITOR_LOGGING_LEVEL: ${KAPACITOR_LOGGING_LEVEL:-INFO}
       KAPACITOR_REPORTING_ENABLED: ${KAPACITOR_REPORTING_ENABLED:-false}
+    hostname: ${CONTAINER_HOST_NAME:-standalone.tick}-kapacitor
+    image: ${IMAGE_NAME:-kapacitor}:${IMAGE_TAG:-1.5.1}
+    labels:
+      deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
+      deploy.config.name: ${LABEL_DEPLOY_CONFIG_NAME:-unknown}
+      deploy.config.ref: ${LABEL_DEPLOY_CONFIG_REF:-unknown}
+      deploy.util.commit: ${LABEL_DEPLOY_UTIL_COMMIT:-unknown}
+      deploy.util.ref: ${LABEL_DEPLOY_UTIL_REF:-unknown}
+      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.tick-kapacitor}
+      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/tick-kapacitor/standalone}
     networks:
       local-network:
-        ipv4_address: 172.16.238.83
-        #ipv6_address: 2001:3984:3989::83
+        ipv4_address: ${IPV4_ADDRESS:-172.16.238.83}
+        #ipv6_address: ${IPV6_ADDRESS:-2001:3984:3989::83}
     ports:
-    - "${EXTERNAL_KAPACITOR_PORT:-9092}:${KAPACITOR_PORT:-9092}"
+    - "${EXTERNAL_KAPACITOR_9092_PORT:-9092}:9092"
     restart: always
 
 
